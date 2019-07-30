@@ -1,6 +1,14 @@
 <?php
     $fileArr = file("test.txt");
+    $facts = [];
+    $rules = [];
+    $queries = [];
 
+    // code erreur : 1 => erreur de syntaxe
+    //               2 => erreur de Facts
+    //               3 => erreur de queries 
+
+    // echo checkFacts("=") . "\n";
     // echo checkFile($fileArr);
     delComms($fileArr);
     // print_r($fileArr);
@@ -14,6 +22,8 @@
         }
     }
 
+
+    // fonction de check de l'input et suppression des comms 
 
     function checkFile($arr) {
         $i = 0;
@@ -42,30 +52,76 @@
             $i++;
         }
         $arr = array_values($arr);
-        // store($arr);
-        echo checkFile($arr);
+         echo store($arr);
+        // echo checkFile($arr);
     }
 
+    function checkFacts($line) {
+        $tmpStr = substr($line, 1, strlen($line));
+        if (!preg_match("#^[A-Z]+$#", $tmpStr) && $tmpStr != '') {
+            return 2;
+        } else {
+            storeFacts($line);
+            return 0;
+        }
+    }
+
+    function checkQueries($line) {
+        $tmpStr = substr($line, 1, strlen($line));
+        if (!preg_match("#^[A-Z]+$#", $tmpStr)) {
+            return 3;
+        } else {
+            storeQueries($line);
+            return 0;
+        }
+    }
+
+    function checkRules($arr) {
+        
+    }
+
+    
+
+    // fonctions pour store les entrees dans les globales facts, rules et queries
 
     function store($arr) {
         $i = 0;
         $nbElem = count($arr);
         while ($i < $nbElem) {
             if ($arr[$i][0] == '=') {
-                storeFacts($arr[$i]);
+                $cF = checkFacts($arr[$i]);
                 unset($arr[$i]);
             } else if ($arr[$i][0] == '?') {
-                storeQueries($arr[$i]);
+                $cQ = checkQueries($arr[$i]);
                 unset($arr[$i]);
             }
             $i++;
         }
-        $arr = array_values($arr);
-        storeRules($arr);
+        if ($cF == 2) {  // return erreur de facts
+            return $cF;
+        } else if ($cQ == 3) { // return erreur de queries
+            return $cQ;
+        } else {
+            return 0;
+        }
+        // $arr = array_values($arr);
+        // storeRules($arr);
     }
 
     function storeFacts($line) {
-        echo $line . "\n";
+        // echo $line . "\n";
+        if ($line == '=') {
+            $GLOBALS["facts"][0] = "false"; 
+        } else {
+            $iLine = 1;
+            $iFacts = 0;
+            $linelen = strlen($line);
+            while ($iLine < $linelen) {
+                $GLOBALS["facts"][$iFacts] = $line[$iLine];
+                $iFacts++;
+                $iLine++;
+            }
+        }
     }
 
     function storeRules($arr) {
@@ -73,6 +129,6 @@
     }
 
     function storeQueries($line) {
-        echo $line . "\n";
+        // echo $line . "\n";
     }
 ?>

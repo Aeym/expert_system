@@ -1,11 +1,15 @@
 <?php
-    $fileArr = file($argv[1]);
     $facts = [];
     $rules = [];
     $queries = [];
-
+    
     if (isFileEmpty($argv[1]) != 0){
+        $fileArr = file($argv[1]);
         delComms($fileArr);
+        echo store($fileArr) . "\n";
+        print_r($GLOBALS["facts"]);
+        print_r($GLOBALS["queries"]);
+        print_r($GLOBALS["rules"]);
     }
     else {        
         return 0;
@@ -66,7 +70,7 @@
             $i++;
         }
         $arr = array_values($arr);
-         echo store($arr);
+        //  echo store($arr);
         // echo checkFile($arr);
     }
 
@@ -137,8 +141,6 @@
                return 0;
            }
         }
-        // $arr = array_values($arr);
-        // storeRules($arr);
     }
 
     function storeFacts($line) {
@@ -158,7 +160,23 @@
     }
 
     function storeRules($arr) {
-        print_r($arr);
+        // print_r($arr);
+        $iRules = 0;
+        $nbElem = count($arr);
+        while ($iRules < $nbElem) {
+            if (strpos($arr[$iRules], "<=>") !== false) {
+                $tmpArr = preg_split("#\<\=\>#", $arr[$iRules]);
+                $GLOBALS["rules"][$iRules]["left"] = $tmpArr[0];
+                $GLOBALS["rules"][$iRules]["signe"] = "<=>";
+                $GLOBALS["rules"][$iRules]["right"] = $tmpArr[1];
+            } else if (strpos($arr[$iRules], "=>") !== false) {
+                $tmpArr = preg_split("#\=\>#", $arr[$iRules]);
+                $GLOBALS["rules"][$iRules]["left"] = $tmpArr[0];
+                $GLOBALS["rules"][$iRules]["signe"] = "=>";
+                $GLOBALS["rules"][$iRules]["right"] = $tmpArr[1];                
+            } 
+            $iRules++;
+        }
     }
 
     function storeQueries($line) {

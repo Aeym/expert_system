@@ -116,6 +116,7 @@
         } else if ($cQ == 3) { // return erreur de queries
             return $cQ;
         } else {
+        //checkRules() check la valeur de retour et return 4 si erreur de rule ou 0 si tout va bien
             return 0;
         }
         // $arr = array_values($arr);
@@ -144,5 +145,13 @@
 
     function storeQueries($line) {
         // echo $line . "\n";
+        $iLine = 1;
+        $iQueries= 0;
+        $linelen = strlen($line);
+        while ($iLine < $linelen) {
+            $GLOBALS["queries"][$iQueries] = $line[$iLine];
+            $iQueries++;
+            $iLine++;
+        }
     }
 ?>

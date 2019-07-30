@@ -1,18 +1,32 @@
 <?php
-    $fileArr = file("test.txt");
+    $fileArr = file($argv[1]);
     $facts = [];
     $rules = [];
     $queries = [];
 
+    if (isFileEmpty($argv[1]) != 0){
+        delComms($fileArr);
+    }
+    else {        
+        return 0;
+    }
     // code erreur : 1 => erreur de syntaxe
     //               2 => erreur de Facts
     //               3 => erreur de queries 
 
     // echo checkFacts("=") . "\n";
     // echo checkFile($fileArr);
-    delComms($fileArr);
+    //delComms($fileArr);
     // print_r($fileArr);
     // parsefile($tmpArr);
+
+    function isFileEmpty($arr) {
+        clearstatcache();
+        if(filesize($arr)) {
+            return 1;
+        }
+        return 0;
+    }
 
     function parseFile($arr) {
         $i = 0;

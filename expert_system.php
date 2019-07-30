@@ -91,7 +91,19 @@
     }
 
     function checkRules($arr) {
-        
+        $i = 0;
+        $nbElem = count($arr);
+        while ($i < $nbElem){
+            // verifier que le premier charactere est une lettre
+            $firstCharacter = $arr[$i][0];
+            $lastCharacter = substr($arr[$i], -1);
+            if (!preg_match("#^[A-Z]$#", $firstCharacter) || (!preg_match("#^[A-Z]$#", $lastCharacter))) {
+                return 4;
+            }            
+            // verier que le derneir characetere est une lettre
+            $i++;
+        }
+        return 0;
     }
 
     
@@ -117,7 +129,13 @@
             return $cQ;
         } else {
         //checkRules() check la valeur de retour et return 4 si erreur de rule ou 0 si tout va bien
-            return 0;
+           $cR = checkRules($arr);          
+           if ($cR == 4) {
+               return $cR;
+           }
+           else {
+               return 0;
+           }
         }
         // $arr = array_values($arr);
         // storeRules($arr);

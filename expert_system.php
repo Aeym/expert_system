@@ -98,13 +98,30 @@
         $i = 0;
         $nbElem = count($arr);
         while ($i < $nbElem){
-            // verifier que le premier charactere est une lettre
+            // verifier que le premier et dernier caractere sont une lettre (ok)
             $firstCharacter = $arr[$i][0];
             $lastCharacter = substr($arr[$i], -1);
             if (!preg_match("#^[A-Z]$#", $firstCharacter) || (!preg_match("#^[A-Z]$#", $lastCharacter))) {
+                echo "1";
                 return 4;
             }            
-            // verier que le derneir characetere est une lettre
+            // verifier pas de double signe identique (ok)
+            else if (preg_match("/(\|{2}|\+{2}|\!{2}|\^{2}|\={2}|\>{2}|\<{2})/", $arr[$i])){
+                echo "2";
+                return 4;
+            }
+            // verifier pas de double lettre (ok)
+            else if (preg_match("/\w*[A-Z]\w*[A-Z]\w*/", $arr[$i])){
+                echo "3";
+                return 4;
+            }           
+            // verifier pas de ! apres lettre
+            else if (preg_match("/[A-Z]\!/", $arr[$i])){
+                echo $arr[$i];
+                return 4;
+            }
+            // verifier pas de double signe (ou plus) non identique (sauf => et <=>)
+            
             $i++;
         }
         return 0;

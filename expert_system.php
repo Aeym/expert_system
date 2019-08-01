@@ -7,16 +7,19 @@
         $fileArr = file($argv[1]);
         delComms($fileArr);
         echo store($fileArr) . "\n";
-        print_r($GLOBALS["facts"]);
-        print_r($GLOBALS["queries"]);
-        print_r($GLOBALS["rules"]);
+        // code erreur : 1 => erreur de syntaxe
+        //               2 => erreur de Facts
+        //               3 => erreur de queries 
+        //               4 => erreur de rules
+        // print_r($GLOBALS["facts"]);
+        // print_r($GLOBALS["queries"]);
+        // print_r($GLOBALS["rules"]);
+        print_r(createGraph());
+        // iterQueries();
     }
     else {        
         return 0;
     }
-    // code erreur : 1 => erreur de syntaxe
-    //               2 => erreur de Facts
-    //               3 => erreur de queries 
 
     // echo checkFacts("=") . "\n";
     // echo checkFile($fileArr);
@@ -107,6 +110,7 @@
             // verier que le derneir characetere est une lettre
             $i++;
         }
+        storeRules($arr);
         return 0;
     }
 
@@ -190,4 +194,90 @@
             $iLine++;
         }
     }
+    
+
+    // graph : adjacent list 
+    
+    function createGraph() {
+        $graph = array();
+        foreach($GLOBALS["rules"] as $rule) {
+            if ($rule["signe"] == "=>" || $rule["signe"] == "<=>") {
+                $lengthR = strlen($rule["right"]);
+                for ($i = 0; $i < $lengthR; $i++) {
+                    if (preg_match('#[A-Z]#', $rule["right"][$i])) {
+                        $lengthL = strlen($rule["left"]);
+                        for ($j = 0; $j < $lengthL; $j++) {
+                            if (preg_match('#[A-Z]#', $rule["left"][$j])) {
+                                if ($graph[$rule["right"][$i]] != null) {
+                                    if (in_array($rule["left"][$j], $graph[$rule["right"][$i]]) == false) {
+                                        $graph[$rule["right"][$i]][] = $rule["left"][$j];
+                                    }
+                                } else {
+                                    $graph[$rule["right"][$i]][] = $rule["left"][$j];
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+            if ($rule["signe"] == "<=>") {
+                $lengthL = strlen($rule["left"]);
+                for ($i = 0; $i < $lengthL; $i++) {
+                    if (preg_match('#[A-Z]#', $rule["left"][$i])) {
+                        $lengthR = strlen($rule["right"]);
+                        for ($j = 0; $j < $lengthR; $j++) {
+                            if (preg_match('#[A-Z]#', $rule["right"][$j])) {
+                                if ($graph[$rule["left"][$i]] != null) {
+                                    if (in_array($rule["right"][$j], $graph[$rule["left"][$i]]) == false) {
+                                        $graph[$rule["left"][$i]][] = $rule["right"][$j];
+                                    }
+                                } else {
+                                    $graph[$rule["left"][$i]][] = $rule["right"][$j];
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return $graph;
+    }
+
+
+    // algo de resolution 
+
+    // function iterQueries() {
+    //     $iQueries = 0;
+    //     $nbElem = count($GLOBALS["queries"]);
+    //     while ($iQueries < $nbElem) {
+    //         findRules($GLOBALS["queries"][$iQueries]);
+    //         $iQueries++;
+    //     }
+    // }
+
+    // function findRules($char) {
+    //     foreach($GLOBALS["rules"] as $arrRule) {
+    //         if ($arrRule["signe"] == "=>") {
+    //             if (strpos($arrRule["right"], $char) !== false) {
+    //                 array_push($arrResult, resolveRule($char, $arrRule));
+    //             }
+    //         } else if ($arrRule["signe"] == "<=>") {
+    //             if (strpos($arrRule["right"], $char) !== false || strpos($arrRule["left"], $char) !== false) {
+    //                 array_push($arrResult, resolveRule($char, $arrRule));
+    //             } 
+    //         }
+    //     }
+    //     // print_r($arrResult);
+    //     // printResult($arrResult);
+    // }
+
+    // function resolveRule($char, $arrRule) {
+         
+    // }
+
+    // function printResult($arrResult) {
+
+    // }
 ?>

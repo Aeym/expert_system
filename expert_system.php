@@ -14,7 +14,7 @@
         // print_r($GLOBALS["facts"]);
         // print_r($GLOBALS["queries"]);
         // print_r($GLOBALS["rules"]);
-        print_r(createGraph());
+        print_r(createGraphBis());
         // iterQueries();
     }
     else {        
@@ -214,7 +214,7 @@
     
 
     // graph : adjacent list 
-    
+
     function createGraph() {
         $graph = array();
         foreach($GLOBALS["rules"] as $rule) {
@@ -262,6 +262,26 @@
         return $graph;
     }
 
+
+    function createGraphBis() {
+        $graph = array();
+        foreach($GLOBALS["rules"] as $rule) {
+            if ($rule["signe"] == "=>" || $rule["signe"] == "<=>") {
+                $tmpArr = explode('+', $rule["right"]);
+                foreach ($tmpArr as $elem) {
+                    $graph[$elem][] = $rule["left"];
+                    $i++; 
+                }
+            }
+            if ($rule["signe"] == "<=>") {
+                $tmpArr = explode('+', $rule["left"]);
+                foreach ($tmpArr as $elem) {
+                    $graph[$elem][] = $rule["right"];
+                }
+            }
+        }
+        return $graph;
+    }
 
     // algo de resolution 
 

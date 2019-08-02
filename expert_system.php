@@ -7,7 +7,6 @@
     if (isFileEmpty($argv[1]) != 0){
         $fileArr = file($argv[1]);        
         delComms($fileArr);
-<<<<<<< HEAD
         if (checkFile($fileArr) == 0)
         {           
             if (store($fileArr) == 0) {               
@@ -22,21 +21,6 @@
                 // iterQueries();
             }            
         }
-=======
-        echo store($fileArr) . "\n";
-        // code erreur : 1 => erreur de syntaxe
-        //               2 => erreur de Facts
-        //               3 => erreur de queries 
-        //               4 => erreur de rules
-        // print_r($GLOBALS["facts"]);
-        // print_r($GLOBALS["queries"]);
-        // print_r($GLOBALS["rules"]);
-        
-        // print_r(createGraphBis());
-        $GLOBALS["graph"] = createGraphBis();
-        callAlgo();
-        // iterQueries();
->>>>>>> 2c26832f525da51352c19cda2fa14b8537b2d54b
     }
     else {
         return 0;

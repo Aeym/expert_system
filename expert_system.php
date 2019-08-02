@@ -2,10 +2,12 @@
     $facts = [];
     $rules = [];
     $queries = [];
+    $graph = [];
     
     if (isFileEmpty($argv[1]) != 0){
         $fileArr = file($argv[1]);        
         delComms($fileArr);
+<<<<<<< HEAD
         if (checkFile($fileArr) == 0)
         {           
             if (store($fileArr) == 0) {               
@@ -20,6 +22,21 @@
                 // iterQueries();
             }            
         }
+=======
+        echo store($fileArr) . "\n";
+        // code erreur : 1 => erreur de syntaxe
+        //               2 => erreur de Facts
+        //               3 => erreur de queries 
+        //               4 => erreur de rules
+        // print_r($GLOBALS["facts"]);
+        // print_r($GLOBALS["queries"]);
+        // print_r($GLOBALS["rules"]);
+        
+        // print_r(createGraphBis());
+        $GLOBALS["graph"] = createGraphBis();
+        callAlgo();
+        // iterQueries();
+>>>>>>> 2c26832f525da51352c19cda2fa14b8537b2d54b
     }
     else {
         return 0;
@@ -416,6 +433,138 @@
 
     // algo de resolution 
 
+
+    function callAlgo() {
+        foreach ($GLOBALS["queries"] as $query) {
+            $ret = algo($query);
+            if ($ret == 'T') {
+                echo $query . " is true.\n";
+            } else if ($ret == 'F' || $ret == 'U') {
+                echo $query . " is false.\n";
+            } else if ($ret == "C") {
+                echo "There is a contradiction with query " . $query . "\n";
+            }
+        }
+    }
+
+
+    function algo($char) {
+        // print_r($GLOBALS["graph"]);
+        if (in_array($char, $GLOBALS["facts"]) && !(array_key_exists($char, $GLOBALS["graph"])) && !(array_key_exists("!" . $char, $GLOBALS["graph"]))) {
+            return "T";
+        } else {
+            // echo $char . "\n";
+            // echo array_key_exists($char, $GLOBALS["graph"]) . "\n";
+            if (array_key_exists($char, $GLOBALS["graph"]) || array_key_exists("!" . $char, $GLOBALS["graph"])) { // || in_array("!" . $char, $GLOBALS["graph"]) gestion du ! dans la conclusion 
+                echo "je suis laaaaaa\n";
+                $arrDepRes = array("not!" => array(), "!" => array());
+                if (in_array($char, $GLOBALS["facts"])) {
+                    $arrDepRes["not!"][] = "T";
+                }
+                // echo "here\n";
+                if (array_key_exists($char, $GLOBALS["graph"])) {
+                    foreach ($GLOBALS["graph"][$char] as $depends) {
+                        // echo $depends . "\n";
+                        $length = strlen($depends);
+                        $tmpStr = "";
+                        for ($i = 0; $i < $length; $i++) {
+                            if (preg_match('#[A-Z]#', $depends[$i])) {
+                                $tmpStr .= algo($depends[$i]);
+                            } else {
+                                $tmpStr .= $depends[$i];
+                            }
+                        }
+                        $arrDepRes["not!"][] = resolveStr($tmpStr);
+                    }
+                }
+                if (array_key_exists("!" . $char, $GLOBALS["graph"])) {
+                    foreach ($GLOBALS["graph"]["!" . $char] as $depends) {
+                        // echo $depends . "\n";
+                        $length = strlen($depends);
+                        $tmpStr = "";
+                        for ($i = 0; $i < $length; $i++) {
+                            if (preg_match('#[A-Z]#', $depends[$i])) {
+                                $tmpStr .= algo($depends[$i]);
+                            } else {
+                                $tmpStr .= $depends[$i];
+                            }
+                        }
+                        $arrDepRes["!"][] = resolveStr($tmpStr);
+                    }
+                }
+                return checkContrad($arrDepRes);
+            } else {
+                return "F";
+            }
+        }
+    }
+
+
+    function checkContrad($arr) {
+        echo "on est dn checkcontrad\n";
+        print_r($arr);
+        $ret = "";
+        // on check pour les conclusion en char
+        if (in_array("T", $arr["not!"]) && in_array("F", $arr["not!"])) {
+            $ret = "T";;
+        } else if (in_array("T", $arr["not!"])) {
+            $ret = "T";
+        } else {
+            $ret = "U";
+        }
+        echo "ret = " . $ret . "\n";
+        // on check pour les conclusions en !char
+        if (in_array("T", $arr["!"]) && $ret == "T") {
+            $ret = "C";
+        } else if (in_array("T", $arr["!"])) {
+            $ret = "F";
+        } else {
+            $ret = "U";
+        }
+        echo "ret = " . $ret . "\n";
+        return $ret;
+    }
+
+    function resolveStr($str) {
+        // echo "je suis dans resolve \n";
+        $str = str_replace("!F", "T", $str);
+        $str = str_replace("!T", "F", $str);
+        while(strlen($str) > 1) {
+            // echo $str . "\n";
+            while (($p = strpos($str, '+')) !== false) {
+                // echo "ici\n";
+                $tmpStr = substr($str, $p - 1, 3);
+                // echo $tmpStr . "\n";
+                if ((strpos($tmpStr, 'T') !== false) && (strpos($tmpStr, 'F') === false)) {
+                    $str = str_replace($tmpStr, 'T', $str);
+                } else {
+                    $str = str_replace($tmpStr, 'F', $str);
+                }
+                // echo $str . "\n";
+            }
+            while (($p = strpos($str, '|')) !== false) {
+                // echo "la\n";
+                $tmpStr = substr($str, $p - 1, 3);
+                if (strpos($tmpStr, 'T') !== false && strpos($tmpStr, 'F') !== false || strpos($tmpStr, 'T') !== false && strpos($tmpStr, 'F') === false) {
+                    $str = str_replace($tmpStr, 'T', $str);
+                } else {
+                    $str = str_replace($tmpStr, 'F', $str);
+                }
+            } 
+            while (($p = strpos($str, '^')) !== false) {
+                // echo "la\n";
+                $tmpStr = substr($str, $p - 1, 3);
+                // echo $tmpStr. "\n";
+                if (strpos($tmpStr, 'T') !== false && strpos($tmpStr, 'F') !== false) {
+                    $str = str_replace($tmpStr, 'T', $str);
+                } else {
+                    $str = str_replace($tmpStr, 'F', $str);
+                }
+            } 
+        }
+        return $str;
+    }
+ 
     // function iterQueries() {
     //     $iQueries = 0;
     //     $nbElem = count($GLOBALS["queries"]);

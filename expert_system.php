@@ -101,41 +101,80 @@
         }
     }
 
+
+    function is_Sign($char){
+        if ($char == '+' || $char == '=' || $char == '<' || $char == '>' || $char == '|' || $char == '!' || $char == '^') {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
     function checkRules($arr) {
         $i = 0;
+        $n = 0;       
         $nbElem = count($arr);
-        while ($i < $nbElem){
+        while ($i < $nbElem){            
+            $nbCharacter = strlen($arr[$i]);           
             // verifier que le premier et dernier caractere sont une lettre (ok)
             $firstCharacter = $arr[$i][0];
             $lastCharacter = substr($arr[$i], -1);
             if (!preg_match("#^[A-Z]$#", $firstCharacter) || (!preg_match("#^[A-Z]$#", $lastCharacter))) {
-                echo "1";
+                echo "Premier ou dernier caracter non alphabetique";
                 return 4;
             }            
             // verifier pas de double signe identique (ok)
             else if (preg_match("/(\|{2}|\+{2}|\!{2}|\^{2}|\={2}|\>{2}|\<{2})/", $arr[$i])){
-                echo "2";
+                echo "double signe";
                 return 4;
             }
             // verifier pas de double lettre (ok)
             else if (preg_match("/\w*[A-Z]\w*[A-Z]\w*/", $arr[$i])){
-                echo "3";
+                echo "double lettre";
                 return 4;
             }           
             // verifier pas de ! apres lettre
             else if (preg_match("/[A-Z]\!/", $arr[$i])){
-                echo $arr[$i];
+                echo "! apres lettre";
                 return 4;
             }
             // verifier pas de double signe (ou plus) non identique (sauf => et <=>)
-            
+            for ($n = 0; $n < $nbCharacter; $n++){
+                $next = 0;
+                $currentChar = substr($arr[$i], $n, 1);
+                if (is_Sign($currentChar) == 1){ // Signe trouvé
+                    $next = $n + 1;
+                    $nextChar = substr($arr[$i], $next, 1);  
+                    // Verifier triple signes de forme <=>, (si different de '>', pas bon)
+                    if ($currentChar == '<') {
+                       if ($nextChar == '='){
+                           $x = $next + 1;
+                           $xChar = substr($arr[$i], $x, 1);
+                            if ($xChar != '>') {
+                                echo "erreur <=?";
+                                return 4;
+                            }
+                       }
+                       if ($nextChar != '='){
+                           echo "erreur <?>";
+                           return 4;
+                       }
+                    }
+                    // Verifier double signe de forme =>, (si different de '>', pas bon)
+                    if ($currentChar == '=') {
+                        if ($nextChar != '>') {
+                            echo "erreur =?";
+                            return 4;
+                        }
+                    }
+                }
+            }
             $i++;
         }
         storeRules($arr);
         return 0;
     }
-
-    
 
     // fonctions pour store les entrees dans les globales facts, rules et queries
 

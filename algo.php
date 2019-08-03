@@ -35,7 +35,6 @@ function algo($char) {
                             $tmpStr .= $depends[$i];
                         }
                     }
-                    echo "retour de bracket dans algo : " . bracket($tmpStr) . " ? \n";
                     $arrDepRes["not!"][] = bracket($tmpStr);
                 }
             }

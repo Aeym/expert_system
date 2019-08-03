@@ -1,25 +1,30 @@
 <?php 
 
-function store($arr) {
+function store($arr, $newfact) {
     $i = 0;
     $nbElem = count($arr);
     while ($i < $nbElem) {
         if ($arr[$i][0] == '=') {
-            $cF = checkFacts($arr[$i]);
-            unset($arr[$i]);
+            if ($newfact != NULL){
+                $cF = checkFacts($newfact);
+                unset($arr[$i]);     
+            }
+            else {
+                $cF = checkFacts($arr[$i]);
+                unset($arr[$i]);
+            }           
         } else if ($arr[$i][0] == '?') {
             $cQ = checkQueries($arr[$i]);
             unset($arr[$i]);
         }
         $i++;
     }
-    if ($cF == 2) {  // return erreur de facts
+    if ($cF == 2) {
         return $cF;
-    } else if ($cQ == 3) { // return erreur de queries
+    } else if ($cQ == 3) {
         return $cQ;
     } else {
-    //checkRules() check la valeur de retour et return 4 si erreur de rule ou 0 si tout va bien
-       $cR = checkRules($arr);          
+       $cR = checkRules($arr);
        if ($cR == 4) {
            return $cR;
        }
@@ -36,11 +41,11 @@ function storeFacts($line) {
         $iLine = 1;
         $iFacts = 0;
         $linelen = strlen($line);
-        while ($iLine < $linelen) {
+        while ($iLine < $linelen) {          
             $GLOBALS["facts"][$iFacts] = $line[$iLine];
             $iFacts++;
             $iLine++;
-        }
+        }        
     }
 }
 
@@ -74,9 +79,6 @@ function storeQueries($line) {
     }
 }
 
-
-// graph : adjacent list 
-
 function createGraph() {
     $graph = array();
     foreach($GLOBALS["rules"] as $rule) {
@@ -90,6 +92,5 @@ function createGraph() {
     }
     return $graph;
 }
-
 
 ?>

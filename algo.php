@@ -173,7 +173,9 @@ function resolveStr($str) {
             } else if ((strpos($tmpStr, 'T') !== false) && (strpos($tmpStr, 'U') !== false)) {
                 $str = str_replace($tmpStr, 'U', $str);
                 $tmpStr2 = '[' . $undeter[$countU][0] . ';' . $undeter[$countU][1] . ']' ;
-                $countU++;
+                if ($undeter[$countU + 1] != NULL) {
+                    $countU++;
+                }
             } else {
                 $str = str_replace($tmpStr, 'F', $str);
             }

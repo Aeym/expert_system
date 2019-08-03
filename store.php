@@ -80,14 +80,22 @@ function storeQueries($line) {
 function createGraph() {
     $graph = array();
     foreach($GLOBALS["rules"] as $rule) {
-        if ($rule["signe"] == "=>") {
+        if ($rule["signe"] == "=>" || $rule["signe"] == "<=>") {
             $tmpArr = explode('+', $rule["right"]);
             foreach ($tmpArr as $elem) {
                 $graph[$elem][] = $rule["left"];
                 $i++; 
             }
         }
+        if ($rule["signe"] == "<=>") {
+            $tmpArr = explode('+', $rule["left"]);
+            foreach ($tmpArr as $elem) {
+                $graph[$elem][] = $rule["right"];
+                $i++; 
+            }
+        }
     }
+    print_r($graph);
     return $graph;
 }
 

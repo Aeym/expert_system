@@ -18,6 +18,7 @@
                 // print_r($GLOBALS["queries"]);
                 // print_r($GLOBALS["rules"]);
                 print_r(createGraphBis());
+                callAlgo();
                 // iterQueries();
             }            
         }
@@ -138,8 +139,12 @@
         $countO = 0;
 		$countC = 0;
 		$countEq = 0;
-        $nbElem = count($arr);
-        while ($i < $nbElem){            
+        $nbElem = count($arr);      
+        while ($i < $nbElem){
+            if ($arr[$i] == NULL){
+                echo "erreur mal indexé";
+                return 4;
+            }            
             $nbCharacter = strlen($arr[$i]);
             // verifier pas de '?'
             if (preg_match("/\?/", $arr[$i])){
@@ -149,7 +154,7 @@
             // verifier que le premier caractere est un ! ou une lettre et que le dernier caractere est une lettre.
             $firstCharacter = $arr[$i][0];
             $lastCharacter = substr($arr[$i], -1);
-            if (!preg_match("#^[\!\(A-Z]$#", $firstCharacter) || (!preg_match("#^[A-Z\)]$#", $lastCharacter))) {
+            if (!preg_match("#^[\!\(A-Z]$#", $firstCharacter) || (!preg_match("#^[A-Z\)]$#", $lastCharacter))) {                
                 echo "Premier ou dernier caractere non alphabetique";
                 return 4;
             }            

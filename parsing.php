@@ -8,6 +8,62 @@ function isFileEmpty($arr) {
     return 0;
 }
 
+function checkRetValue_one($val) {
+    if ($val == 2){
+        echo "Fact error" . "\n";
+    }
+    else if ($val == 3){
+        echo "Query error" . "\n";
+    }
+    else {
+        echo "Rule error" . "\n";                    
+    }
+    return $val;
+}
+
+function checkRetValue_two($val){
+    if ($val == 1){
+        echo "Syntax error" . "\n";
+        return 1;
+    }
+    else if ($val == 2){
+        echo "Missing query" . "\n";
+        return 1;
+    }
+    else if ($val == 3){
+        echo "Missing fact" . "\n";
+        return 1;
+    }
+    else if ($val == 5){
+        echo "Too many facts" . "\n";
+        return 1;
+    }
+    else if ($val == 6){
+        echo "Too many queries" . "\n";
+        return 1;
+    }
+    else {
+        echo "Missing rule" . "\n";
+        return 1;
+    }
+}
+
+function inputFact($argv)
+{
+    if ($argv == "Fact"){
+        echo "Enter new fact: ";
+        $input = rtrim(fgets(STDIN));            
+        if (preg_match("/^\=[A-Z]+$/", $input) || ($input[0] == '=' && $input[1] == NULL)) {
+            return $input;                
+        }
+        else {
+            echo "New facts are not valid." . "\n";
+            return 1;
+        }
+    }
+    return 0;
+}
+
 function checkFile($arr) {
     $i = 0;
     $checkQ = 0;
@@ -20,16 +76,28 @@ function checkFile($arr) {
         if (preg_match("/\=\>/", $arr[$i]) || preg_match("/\<\=\>/", $arr[$i])){
             $checkR++;
         }        
-        if ($arr[$i][0] == '='){
-            $checkQ++;
+        if ($arr[$i][0] == '=' && $i != 0){
+            $checkF++;
         }       
         if ($arr[$i][0] == '?'){
-            $checkF++;
+            $checkQ++;
         }
         $i++;
     }
-    if ($checkQ != 1 || $checkF != 1 || $checkR < 1) {
-        return 1;
+    if ($checkR < 1){
+        return 4;
+    }
+    if ($checkF < 1){
+        return 3;
+    }
+    if ($checkF > 1){
+        return 5;
+    }
+    if ($checkQ < 1) {
+        return 2;
+    }
+    if ($checkQ > 1) {
+        return 6;
     }
     return 0;
 }
@@ -88,7 +156,10 @@ function checkRules($arr) {
     $countC = 0;
     $countEq = 0;
     $nbElem = count($arr);
-    while ($i < $nbElem){            
+    if ($nbElem == 0){
+        return 4;
+    }
+    while ($i < $nbElem){        
         $nbCharacter = strlen($arr[$i]);
         if (preg_match("/\?/", $arr[$i])){            
             return 4;

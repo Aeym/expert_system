@@ -164,7 +164,7 @@ function resolveStr($str) {
     // echo "str arrive a resolve : " . $str . "\n";
     $undeter = checkU($str);
     // echo "str aprres checkU : " . $str . "\n";
-    print_r($undeter);
+    // print_r($undeter);
     $countU = 0;
     $str = str_replace("!F", "T", $str);
     $str = str_replace("!T", "F", $str);

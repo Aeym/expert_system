@@ -17,6 +17,8 @@ CAT=$(which cat)
 DIR1=$(pwd)
 DIR2="/tests/$chosedir/*"
 DIR3="$DIR1$DIR2"
+EXSYS="/expert_system.php"
+MULTIHOME="$DIR1$EXSYS"
 for file in $DIR3; do
     echo $reset
     echo $file
@@ -29,6 +31,6 @@ for file in $DIR3; do
         else
             echo $green
     fi
-    $PHP /Users/adacher/expert-sys/expert_system.php $file
+    $PHP $MULTIHOME $file
     echo -e "\n"
 done

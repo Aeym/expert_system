@@ -97,7 +97,7 @@ function createGraph() {
             }
         }
     }
-    print_r($graph);
+    // print_r($graph);
     return $graph;
 }
 

@@ -1,5 +1,4 @@
-A | (B + C + C) => D
-E => A | B
-F => C
+E => A ^ C
+A ^ A => G
 =EF
-?D
+?G

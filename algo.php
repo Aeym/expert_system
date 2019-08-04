@@ -33,9 +33,9 @@ function algo($char) {
                 $arrDepRes["not!"][] = "T";
             }
             if (array_key_exists($char, $GLOBALS["graph"])) {
-                echo "laa\n";
+                // echo "laa\n";
                 foreach ($GLOBALS["graph"][$char] as $depends) {
-                    echo "ici\n";
+                    // echo "ici\n";
                     $length = strlen($depends);
                     $tmpStr = "";
                     for ($i = 0; $i < $length; $i++) {
@@ -45,7 +45,7 @@ function algo($char) {
                             $tmpStr .= $depends[$i];
                         }
                     }
-                    echo "str avant appel a bracket : " . $tmpStr . "\n";
+                    // echo "str avant appel a bracket : " . $tmpStr . "\n";
                     $arrDepRes["not!"][] = bracket($tmpStr);
                 }
             }
@@ -86,7 +86,7 @@ function algo($char) {
 
 
 function checkContrad($arr, $char) {
-    print_r($arr);
+    // print_r($arr);
     $ret = "";
     // Check quand ca implique vrai
     if (in_array("T", $arr["not!"]) || in_array("T", $arr["not!"]) && in_array("U", $arr["not!"]) || in_array("T", $arr["not!"]) && in_array("F", $arr["not!"])) {
@@ -122,8 +122,12 @@ function checkContrad($arr, $char) {
             }
         }
         $ret .= ']';
+    } else if (in_array("F", $arr["0"])) {
+        if ($ret == "") {
+            $ret = "F";
+        }
     }
-    echo "retour de checkContrad : " . $ret . "\n";
+    // echo "retour de checkContrad : " . $ret . "\n";
     return $ret;
 }
 
@@ -157,9 +161,9 @@ function bracket($str) {
 
 
 function resolveStr($str) {
-    echo "str arrive a resolve : " . $str . "\n";
+    // echo "str arrive a resolve : " . $str . "\n";
     $undeter = checkU($str);
-    echo "str aprres checkU : " . $str . "\n";
+    // echo "str aprres checkU : " . $str . "\n";
     print_r($undeter);
     $countU = 0;
     $str = str_replace("!F", "T", $str);
@@ -186,6 +190,7 @@ function resolveStr($str) {
                 $str = str_replace($tmpStr, 'T', $str);
             } else if (strpos($tmpStr, 'F') !== false && strpos($tmpStr, 'U') !== false) {
                 $str = str_replace($tmpStr, 'U', $str);
+                $countU++;
             } else if (strpos($tmpStr, 'U') !== false) {
                 if ($undeter[$countU][0] == $undeter[$countU + 1][0]) {
                     if ($undeter[$countU][1] != $undeter[$countU + 1][1]) {
@@ -205,6 +210,20 @@ function resolveStr($str) {
             $tmpStr = substr($str, $p - 1, 3);
             if (strpos($tmpStr, 'T') !== false && strpos($tmpStr, 'F') !== false) {
                 $str = str_replace($tmpStr, 'T', $str);
+            } else if (strpos($tmpStr, 'F') !== false && strpos($tmpStr, 'U') !== false || strpos($tmpStr, 'T') !== false && strpos($tmpStr, 'U') !== false) {
+                $str = str_replace($tmpStr, 'U', $str);
+                $countU++;
+            } else if (strpos($tmpStr, 'U') !== false) {
+                if ($undeter[$countU][0] == $undeter[$countU + 1][0]) {
+                    if ($undeter[$countU][1] != $undeter[$countU + 1][1]) {
+                        $str = str_replace($tmpStr, 'T', $str);
+                    } else {
+                        $str = str_replace($tmpStr, 'F', $str);
+                    }
+                } else {
+                    $str = str_replace($tmpStr, 'U', $str);
+                }
+                $countU += 2;
             } else {
                 $str = str_replace($tmpStr, 'F', $str);
             }
@@ -213,7 +232,7 @@ function resolveStr($str) {
     if ($tmpStr2 != "") {
         $str .= $tmpStr2;
     }
-    echo "retour de resolve : " . $str . "\n";
+    // echo "retour de resolve : " . $str . "\n";
     return $str;
 }
 
@@ -232,7 +251,7 @@ function checkU(& $str) {
         }
         if ($first != 0 && $next != 0) {
             $tmp = substr($str, $first, $next - $first + 1);
-            echo "tmp = " . $tmp . "\n";
+            // echo "tmp = " . $tmp . "\n";
             $pos = strpos($str, $tmp);
             if ($pos !== false) {
                 $str = substr_replace($str, '', $pos, strlen($tmp));

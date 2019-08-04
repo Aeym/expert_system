@@ -1,6 +1,5 @@
 <?php 
 
-
 function callAlgo() {
     foreach ($GLOBALS["queries"] as $query) {
         $ret = algo($query);
@@ -267,4 +266,5 @@ function checkU(& $str) {
     }
     return $arr;
 }
+
 ?>

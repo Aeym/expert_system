@@ -4,10 +4,16 @@ echo "Usage : type directory name to test expert system"
 echo -e "\n"
 echo "Available directories :"
 echo "1) error"
-echo "2) "
-echo "3) "
+echo "2) easy"
+echo "3) medium"
+echo "4) hard"
 echo -e "\n"
 read -p "Enter name : " chosedir
+if [ "$chosedir" != "error" ] && [ "$chosedir" != "easy" ] && [ "$chosedir" != "medium" ] && [ "$chosedir" != "hard" ]
+    then
+        echo "Invalid directory name"
+        exit 1
+fi
 red=`tput setaf 1`
 green=`tput setaf 2`
 cyan=`tput setaf 6`

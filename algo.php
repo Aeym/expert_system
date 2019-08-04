@@ -32,9 +32,7 @@ function algo($char) {
                 $arrDepRes["not!"][] = "T";
             }
             if (array_key_exists($char, $GLOBALS["graph"])) {
-                // echo "laa\n";
                 foreach ($GLOBALS["graph"][$char] as $depends) {
-                    // echo "ici\n";
                     $length = strlen($depends);
                     $tmpStr = "";
                     for ($i = 0; $i < $length; $i++) {
@@ -44,7 +42,6 @@ function algo($char) {
                             $tmpStr .= $depends[$i];
                         }
                     }
-                    // echo "str avant appel a bracket : " . $tmpStr . "\n";
                     $arrDepRes["not!"][] = bracket($tmpStr);
                 }
             }
@@ -85,9 +82,7 @@ function algo($char) {
 
 
 function checkContrad($arr, $char) {
-    // print_r($arr);
     $ret = "";
-    // Check quand ca implique vrai
     if (in_array("T", $arr["not!"]) || in_array("T", $arr["not!"]) && in_array("U", $arr["not!"]) || in_array("T", $arr["not!"]) && in_array("F", $arr["not!"])) {
         $ret = "T";;
     } else if (in_array("U", $arr["not!"]) || in_array("U", $arr["not!"]) && in_array("F", $arr["not!"])) {
@@ -95,7 +90,6 @@ function checkContrad($arr, $char) {
     } else if (in_array("F", $arr["not!"])) {
         $ret = 'F';
     }
-    // check quand ca implique faux
     if (in_array("T", $arr["!"]) || in_array("T", $arr["!"]) && in_array("U", $arr["!"]) || in_array("T", $arr["!"]) && in_array("F", $arr["!"])) {
         if ($ret == "T") {
             $ret = "C";
@@ -111,7 +105,6 @@ function checkContrad($arr, $char) {
             $ret = "F";
         }
     }
-    // check quand ca implique indetermine
     if (in_array("T", $arr['0']) && ($ret == 'U' || $ret == 'F' || $ret == '')) {
         $ret .= 'U[';
         foreach($arr['0'] as $key => $value) {
@@ -126,7 +119,6 @@ function checkContrad($arr, $char) {
             $ret = "F";
         }
     }
-    // echo "retour de checkContrad : " . $ret . "\n";
     return $ret;
 }
 
@@ -144,7 +136,8 @@ function bracket($str) {
             $closeB[] = $i;
         }
         $c = count($openB);
-        if ($i == ($length - 1) && $c != 0) {
+        $i++;
+        if ($i == ($length) && $c != 0) {
             $tmp = substr($str, $openB[$c - 1], $closeB[0] - $openB[$c -1] + 1);
             $res = resolveStr(substr($tmp, 1, strlen($tmp) - 2));
             $str = str_replace($tmp, $res, $str);
@@ -152,7 +145,6 @@ function bracket($str) {
             $closeB = [];
             $i = 0;
         }
-        $i++;
     }
     
     return resolveStr($str);
@@ -160,10 +152,7 @@ function bracket($str) {
 
 
 function resolveStr($str) {
-    // echo "str arrive a resolve : " . $str . "\n";
     $undeter = checkU($str);
-    // echo "str aprres checkU : " . $str . "\n";
-    // print_r($undeter);
     $countU = 0;
     $str = str_replace("!F", "T", $str);
     $str = str_replace("!T", "F", $str);
@@ -231,7 +220,6 @@ function resolveStr($str) {
     if ($tmpStr2 != "") {
         $str .= $tmpStr2;
     }
-    // echo "retour de resolve : " . $str . "\n";
     return $str;
 }
 
@@ -250,12 +238,10 @@ function checkU(& $str) {
         }
         if ($first != 0 && $next != 0) {
             $tmp = substr($str, $first, $next - $first + 1);
-            // echo "tmp = " . $tmp . "\n";
             $pos = strpos($str, $tmp);
             if ($pos !== false) {
                 $str = substr_replace($str, '', $pos, strlen($tmp));
             }
-            // $str = str_replace($tmp, '', $str);
             $tmp2 = substr($tmp, 1, strlen($tmp) - 2);
             $arr[] = explode(';', $tmp2);
             $i = 0;

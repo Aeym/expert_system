@@ -23,8 +23,8 @@ function store($arr, $newfact) {
         return $cF;
     } else if ($cQ == 3) {
         return $cQ;
-    } else {
-       $cR = checkRules($arr);
+    } else {      
+       $cR = checkRules($arr); 
        if ($cR == 4) {
            return $cR;
        }
